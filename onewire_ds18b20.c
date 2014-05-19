@@ -14,7 +14,6 @@ inline float celsius_to_fahrenheit(float degrees_celsius)
          unplugged mid-conversion. A timeout must also be implemented.*/
 float ds18b20_get_temperature(struct OnewireDevice *therm)
 {
-  clear_pin(therm->bus_port, 7);
   onewire_send_reset_pulse(therm);
   onewire_send_byte(therm, SKIP_ROM);
   onewire_send_byte(therm, CONVERT_T);
@@ -40,8 +39,7 @@ float ds18b20_get_temperature(struct OnewireDevice *therm)
   if (decimal_portion_fixed != 0) {
     reading += 1.0f/decimal_portion_fixed;
   }
-
-  return reading;
+  return celsius_to_fahrenheit(reading);
 }
 
 int8_t ds18b20_setup_device(struct OnewireDevice *therm, 

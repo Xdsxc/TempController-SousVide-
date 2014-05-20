@@ -1,6 +1,5 @@
 #ifndef PINMANIP_H_
 #define PINMANIP_H_
-
 #include <stdint.h>
 
 typedef enum {INPUT, OUTPUT} PinMode;
@@ -16,7 +15,7 @@ inline void clear_pins(volatile uint8_t *src, uint8_t bit_clear_mask);
 
 inline volatile uint8_t* port_to_dir_reg(volatile uint8_t *port_reg)
 {
-  return (uint8_t*)(port_reg - 0x01);
+  return port_reg - 0x01;
 }
 
 inline volatile uint8_t* port_to_pin_reg(volatile uint8_t *port_reg)
@@ -26,10 +25,10 @@ inline volatile uint8_t* port_to_pin_reg(volatile uint8_t *port_reg)
 inline void set_pin_mode(volatile uint8_t *port_reg, uint8_t pin, PinMode mode)
 {
   if (mode == INPUT) {
-      set_pin((uint8_t*)port_reg, pin);
-      clear_pin((uint8_t*)port_to_dir_reg(port_reg), pin);
+      set_pin(port_reg, pin);
+      clear_pin(port_to_dir_reg(port_reg), pin);
   } else {
-      set_pin((uint8_t*)port_to_dir_reg(port_reg), pin);
+      set_pin(port_to_dir_reg(port_reg), pin);
   }
 }
 

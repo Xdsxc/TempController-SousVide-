@@ -46,6 +46,7 @@ void bitmap_clear_range(struct Bitmap2D *bitmap, uint8_t x_init, uint8_t x_final
 void bitmap_clear_all(struct Bitmap2D *bitmap);
 
 uint8_t bitmap_get_bit(const struct Bitmap2D *bitmap, uint8_t x, uint8_t y);
+uint8_t bitmap_get_byte(const struct Bitmap2D *bitmap, uint8_t x, uint8_t y);
 
 /* 
  * IMPORTANT: See the note in bitmap_initialize */

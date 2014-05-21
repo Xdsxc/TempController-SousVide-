@@ -63,6 +63,11 @@ uint8_t bitmap_get_bit(const struct Bitmap2D *bitmap, uint8_t x, uint8_t y)
   return (bitmap->buf[coordinates_to_index(x, y, bitmap->width)] & (1 << y%8)) > 0;
 }
 
+uint8_t bitmap_get_byte(const struct Bitmap2D *bitmap, uint8_t x, uint8_t y)
+{
+  return bitmap->buf[coordinates_to_index(x, y, bitmap->width)];
+}
+
 void bitmap_clear_all(struct Bitmap2D *bitmap)
 {
   memset(bitmap->buf, 0,(bitmap->width*bitmap->height)/8 + 1);

@@ -21,12 +21,15 @@ struct Bitmap2D
  * Initialize the bitmap structure for width x height bits. Must be called
  * before any other function, except for bitmap_copy. If you wish to simply
  * copy a bitmap struct into a new one,  then initialize the new struct
- * with a width and height of 0. */
-void bitmap_initialize(struct Bitmap2D *bitmap, uint8_t width, uint8_t height);
+ * with a width and height of 0. To set the bitmaps buffer to an external
+ * buffer, set opt_buffer to the address of the external buffer; otherwise pass
+ * opt_buffer NULL. It is the callers responsibility for ensuring that the
+ * buffer is of width*height/8 size.*/
+void bitmap_initialize(struct Bitmap2D *bitmap, uint8_t *opt_buffer, uint8_t width, uint8_t height);
 
 /* 
  * Free a bitmaps held data */
-void bitmap_destroy(struct Bitmap2D *bitmap);
+void bitmap_free_buffer(struct Bitmap2D *bitmap);
 
 /*
  * Get the area size of a bitmap, in number of bits */
@@ -51,5 +54,8 @@ uint8_t bitmap_get_byte(const struct Bitmap2D *bitmap, uint8_t x, uint8_t y);
 /* 
  * IMPORTANT: See the note in bitmap_initialize */
 void bitmap_copy(struct Bitmap2D* destination, const struct Bitmap2D *source);
+void bitmap_new_buffer(struct Bitmap2D *bitmap);
+void bitmap_change_buffer(struct Bitmap2D *bitmap, uint8_t *buf);
+void bitmap_change_size(struct Bitmap2D *bitmap, uint8_t width, uint8_t height);
 
 #endif

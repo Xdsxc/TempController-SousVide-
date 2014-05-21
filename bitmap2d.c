@@ -7,18 +7,20 @@ static inline uint16_t coordinates_to_index(uint8_t x, uint8_t y, uint8_t width)
   return x + ((y/8)*width);
 }
 
-void bitmap_initialize(struct Bitmap2D *bitmap, uint8_t width, uint8_t height)
+void bitmap_initialize(struct Bitmap2D *bitmap, uint8_t *opt_buffer, uint8_t width, uint8_t height)
 {
   bitmap->width = width;
   bitmap->height = height;
-  if (width > 0 && height > 0) {
-    bitmap->buf = (uint8_t*)calloc((width*height)/8 + 1, sizeof(uint8_t));
+  if (width > 0 && height > 0 && opt_buffer == NULL) {
+    bitmap->buf = (uint8_t*)calloc((width*height)/8 + 1,  sizeof(uint8_t));
+  } else if (opt_buffer != NULL) {
+    bitmap->buf = opt_buffer;
   } else {
     bitmap->buf = NULL;
   }
 }
 
-void bitmap_destroy(struct Bitmap2D *bitmap)
+void bitmap_free_buffer(struct Bitmap2D *bitmap)
 {
   free(bitmap->buf);
 }
@@ -70,7 +72,7 @@ uint8_t bitmap_get_byte(const struct Bitmap2D *bitmap, uint8_t x, uint8_t y)
 
 void bitmap_clear_all(struct Bitmap2D *bitmap)
 {
-  memset(bitmap->buf, 0,(bitmap->width*bitmap->height)/8 + 1);
+  memset(bitmap->buf, 0,(bitmap->width*bitmap->height)/8 + (bitmap->width*bitmap->height)%8);
 }
 
 void bitmap_set_all(struct Bitmap2D *bitmap)
@@ -80,16 +82,24 @@ void bitmap_set_all(struct Bitmap2D *bitmap)
 
 void bitmap_copy(struct Bitmap2D* destination, const struct Bitmap2D *source)
 {
-  if (destination->buf != NULL) {
-    bitmap_destroy(destination);
-  }  
   destination->buf = (uint8_t*)malloc((source->width*source->height)/8 + 1);
   destination->height = source->height;
   destination->width = source->width;
   memcpy(destination->buf, source->buf, (source->width*source->height)/8 + 1);
 }
-/*
-void bitmap_set_x(struct Bitmap2D *bitmap, uint16_t x)
+
+void bitmap_new_buffer(struct Bitmap2D *bitmap)
 {
-  bitmap_set_bit(
-}*/
+    bitmap->buf = (uint8_t*)calloc((bitmap->width*bitmap->height)/8 + 1, sizeof(uint8_t));
+}
+
+void bitmap_change_buffer(struct Bitmap2D *bitmap, uint8_t *buf)
+{
+  bitmap->buf = buf;
+}
+
+void bitmap_change_size(struct Bitmap2D *bitmap, uint8_t width, uint8_t height)
+{
+  bitmap->width = width;
+  bitmap->height = height;
+}

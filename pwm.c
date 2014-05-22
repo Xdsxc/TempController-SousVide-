@@ -1,6 +1,6 @@
 #include <avr/io.h>
 #include "pwm.h"
-void pwm_start(uint8_t duty_cycle, uint16_t period_ms)
+void pwm_change_settings(uint8_t duty_cycle, uint16_t period_ms)
 {
   // PWM, phase and frequency correct
   // TOP = ICR1
@@ -9,15 +9,15 @@ void pwm_start(uint8_t duty_cycle, uint16_t period_ms)
   ICR1 = period_ms*125;
   OCR1A = ICR1*((float)duty_cycle/100);
   TCCR1A = _BV(COM1A1);
-  TCCR1B = _BV(CS11) | _BV(CS10) | _BV(WGM13);
+  TCCR1B |=  _BV(WGM13);
 }
 
-void pwm_pause(void)
+void pwm_stop(void)
 {
-  TCCR1B &= ~(_BV(WGM11) | _BV(CS10));
+  TCCR1B &= ~(_BV(CS11) | _BV(CS10));
 }
 
-void pwm_resume(void)
+void pwm_start(void)
 {
-  TCCR1B |= _BV(WGM11) | _BV(CS10);
+  TCCR1B |= _BV(CS11) | _BV(CS10);
 }

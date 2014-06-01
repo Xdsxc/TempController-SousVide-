@@ -1,10 +1,10 @@
 #include <avr/io.h>
+#include <stddef.h>
 #include <util/delay.h>
 #include "pinmanip.h"
 #include "nokia5110driver.h"
+#include "bitmap2d.h"
 #define N5110_MAX_MBITS 4
-#define N5110_WIDTH 84
-#define N5110_HEIGHT 48
 #define N5110_DEFAULT_BIAS 0x4
 #define N5110_DEFAULT_CONTRAST 45
 static void spi_master_initialize(volatile uint8_t *spi_port, uint8_t mosi, 
@@ -22,7 +22,6 @@ void n5110_initialize(struct Nokia5110LCD *lcd, volatile uint8_t *spi_port, vola
 
   // Bus and buffer initialization
   spi_master_initialize(spi_port, mosi, miso, sck, ss);
-  bitmap_initialize(&lcd->screen_buf, 0, N5110_WIDTH, N5110_HEIGHT);
   set_pin_mode(lcd->control_port, lcd->_dc, OUTPUT);
   set_pin_mode(lcd->control_port, lcd->_cs, OUTPUT);
   set_pin_mode(lcd->control_port, lcd->_rst, OUTPUT);
@@ -30,7 +29,6 @@ void n5110_initialize(struct Nokia5110LCD *lcd, volatile uint8_t *spi_port, vola
   
   // Initial reset
   n5110_reset(lcd);
-  n5110_display_screen(lcd);
 }
 
 void n5110_reset(struct Nokia5110LCD *lcd)
@@ -45,10 +43,9 @@ void n5110_reset(struct Nokia5110LCD *lcd)
   n5110_send_command(lcd, N5110_BIAS | N5110_DEFAULT_BIAS);
   n5110_send_command(lcd, N5110_CONTRAST | N5110_DEFAULT_CONTRAST); 
   n5110_send_command(lcd, N5110_BASIC);
-  n5110_send_command(lcd, N5110_NORMAL);
+  n5110_send_command(lcd, N5110_INVERSE);
   n5110_clear(lcd); 
 }
-
 
 void n5110_send_command(const struct Nokia5110LCD *lcd, uint8_t cmd)
 {
@@ -72,17 +69,24 @@ void n5110_send_data(const struct Nokia5110LCD *lcd, uint8_t cmd)
 
 void n5110_clear(struct Nokia5110LCD *lcd)
 {
-  bitmap_clear_all(&lcd->screen_buf);
-  n5110_display_screen(lcd);
+  n5110_display_screen(lcd, NULL);
 }
 
-void n5110_display_screen(const struct Nokia5110LCD *lcd)
+void n5110_display_screen(const struct Nokia5110LCD *lcd, const struct Bitmap2D *bitmap)
 {
   n5110_send_command(lcd, N5110_SET_X | 0x00);
   n5110_send_command(lcd, N5110_SET_Y | 0x00);
-  for (uint8_t y = 0; y < N5110_HEIGHT/8; y++) {
-    for (uint8_t x = 0; x < N5110_WIDTH; x++) {
-      n5110_send_data(lcd, bitmap_get_byte(&lcd->screen_buf, x, y*8));
+  if (bitmap != NULL) {
+    for (uint8_t y = 0; y < N5110_HEIGHT/8; y++) {
+      for (uint8_t x = 0; x < N5110_WIDTH; x++) {
+        n5110_send_data(lcd, bitmap_get_byte(bitmap, x, y*8));
+      }
+    }
+  } else {
+    for (uint8_t y = 0; y < N5110_HEIGHT/8; y++) {
+      for (uint8_t x = 0; x < N5110_WIDTH; x++) {
+        n5110_send_data(lcd, 0);
+      }
     }
   }
 }
@@ -97,13 +101,7 @@ static void spi_master_initialize(volatile uint8_t *spi_port, uint8_t mosi,
   set_pin_mode(spi_port, ss, OUTPUT);
   set_pin(spi_port, ss);
   SPCR = _BV(SPE);
-  SPSR = _BV(SPI2X);
   SPCR |= _BV(MSTR);
-}
-
-void n5110_set_screen(struct Nokia5110LCD *lcd, uint8_t *buf)
-{
-  bitmap_change_buffer(&lcd->screen_buf, buf);
 }
 
 static inline void spi_write(uint8_t data)

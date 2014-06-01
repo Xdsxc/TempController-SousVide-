@@ -1,11 +1,11 @@
 #ifndef NOKIA5110DRIVER_H_
 #define NOKIA5110DRIVER_H_
 #include <stdint.h>
-#include "bitmap2d.h"
+#define N5110_WIDTH 84
+#define N5110_HEIGHT 48
 struct Bitmap2D;
 struct Nokia5110LCD
 {
-  struct Bitmap2D screen_buf;
   volatile uint8_t *control_port;
   uint8_t _dc;
   uint8_t _cs;
@@ -43,6 +43,5 @@ void n5110_reset(struct Nokia5110LCD *lcd);
 void n5110_send_command(const struct Nokia5110LCD *lcd, uint8_t cmd);
 void n5110_send_data(const struct Nokia5110LCD *lcd, uint8_t cmd);
 void n5110_clear(struct Nokia5110LCD *lcd);
-void n5110_display_screen(const struct Nokia5110LCD *lcd);
-void n5110_set_screen(struct Nokia5110LCD *lcd, uint8_t *buf);
+void n5110_display_screen(const struct Nokia5110LCD *lcd, const struct Bitmap2D *bitmap);
 #endif

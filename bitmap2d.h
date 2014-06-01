@@ -1,7 +1,8 @@
 #ifndef BITMAP2D_H_
 #define BITMAP2D_H_
 #include <stdint.h>
-
+#include <stdbool.h>
+#include <stddef.h>
 /* 
  * Struct Bitmap2D
  * Simulates a glorified 2D-array of bits.  Maximum size is 255x255
@@ -12,24 +13,31 @@
  */
 struct Bitmap2D
 {
-  uint8_t *buf;
-  uint8_t width;
-  uint8_t height;
+  uint8_t *_buf;
+  uint16_t _width;
+  uint16_t _height;
 };
 
-/*
- * Initialize the bitmap structure for width x height bits. Must be called
- * before any other function, except for bitmap_copy. If you wish to simply
- * copy a bitmap struct into a new one,  then initialize the new struct
- * with a width and height of 0. To set the bitmaps buffer to an external
- * buffer, set opt_buffer to the address of the external buffer; otherwise pass
- * opt_buffer NULL. It is the callers responsibility for ensuring that the
- * buffer is of width*height/8 size.*/
-void bitmap_initialize(struct Bitmap2D *bitmap, uint8_t *opt_buffer, uint8_t width, uint8_t height);
 
+/* When using this bitmap, any call that creates a copy (specified by the
+ * make_copy parameter) will dynamically allocate memory. It is the callers
+ * responsibility for managing the block before changing buffers */
+
+
+void bitmap_initialize(struct Bitmap2D *bitmap);
 /* 
- * Free a bitmaps held data */
+ * Free a bitmaps held data. Only for bitmaps not referencing an external
+ * buffer */
 void bitmap_free_buffer(struct Bitmap2D *bitmap);
+
+/* Allocate a new buffer, initialized to zeroes. Must already be initialized
+ * with a set size */
+bool bitmap_new_buffer(struct Bitmap2D *bitmap);
+
+bool bitmap_set_buffer(struct Bitmap2D *bitmap, uint8_t *buf, uint16_t width, uint16_t height, bool make_copy);
+
+/* Only for bitmaps with dynamically allocated memory, or freshly initialized*/
+bool bitmap_resize(struct Bitmap2D *bitmap, uint16_t width, uint16_t height);
 
 /*
  * Get the area size of a bitmap, in number of bits */
@@ -38,24 +46,22 @@ uint16_t bitmap_size(const struct Bitmap2D *bitmap);
 /* 
  * The following are all simply Bitmap2D manipulation functions. They're
  * pretty self explanatory */
-void bitmap_set_bit(struct Bitmap2D *bitmap, uint8_t x, uint8_t y);
-void bitmap_set_range(struct Bitmap2D *bitmap, uint8_t x_init, uint8_t x_final, 
-    uint8_t y_init, uint8_t y_final);
+void bitmap_set_bit(struct Bitmap2D *bitmap, uint16_t x, uint16_t y);
+void bitmap_set_range(struct Bitmap2D *bitmap, uint16_t x_init, uint16_t x_final, 
+    uint16_t y_init, uint16_t y_final);
 void bitmap_set_all(struct Bitmap2D *bitmap);
 
-void bitmap_clear_bit(struct Bitmap2D *bitmap, uint8_t x, uint8_t y);
-void bitmap_clear_range(struct Bitmap2D *bitmap, uint8_t x_init, uint8_t x_final, 
-    uint8_t y_init, uint8_t y_final);
+void bitmap_clear_bit(struct Bitmap2D *bitmap, uint16_t x, uint16_t y);
+void bitmap_clear_range(struct Bitmap2D *bitmap, uint16_t x_init, uint16_t x_final, 
+    uint16_t y_init, uint16_t y_final);
 void bitmap_clear_all(struct Bitmap2D *bitmap);
 
-uint8_t bitmap_get_bit(const struct Bitmap2D *bitmap, uint8_t x, uint8_t y);
-uint8_t bitmap_get_byte(const struct Bitmap2D *bitmap, uint8_t x, uint8_t y);
+uint8_t bitmap_get_bit(const struct Bitmap2D *bitmap, uint16_t x, uint16_t y);
+uint8_t bitmap_get_byte(const struct Bitmap2D *bitmap, uint16_t x, uint16_t y);
+void bitmap_write_byte(struct Bitmap2D *bitmap, uint16_t x, uint16_t y, uint8_t val);
 
-/* 
- * IMPORTANT: See the note in bitmap_initialize */
-void bitmap_copy(struct Bitmap2D* destination, const struct Bitmap2D *source);
-void bitmap_new_buffer(struct Bitmap2D *bitmap);
-void bitmap_change_buffer(struct Bitmap2D *bitmap, uint8_t *buf);
-void bitmap_change_size(struct Bitmap2D *bitmap, uint8_t width, uint8_t height);
+
+void bitmap_superimpose(struct Bitmap2D *source, uint16_t src_x, uint16_t src_y, uint16_t width,
+                        struct Bitmap2D *dest  , uint16_t dest_x, uint16_t dest_y);
 
 #endif

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "bitmap2d.h"
 #include <math.h>
@@ -113,12 +114,12 @@ void bitmap_write_byte(struct Bitmap2D *bitmap, uint16_t x, uint16_t y, uint8_t 
   if (byte_offset == 0) {
     bitmap->_buf[coordinates_to_index(x, y, bitmap->_width)] = val;
   } else {
-    uint8_t byte_mask = 0;
-    for (uint8_t i = 0; i < byte_offset; i++) {
-      byte_mask |= 1 << i;
-    }
+    uint8_t byte_mask = (1 << byte_offset) - 1;
     bitmap->_buf[coordinates_to_index(x, y, bitmap->_width)] &= byte_mask | (val << byte_offset);
     bitmap->_buf[coordinates_to_index(x, y + 8, bitmap->_width)] &= ~byte_mask | (val >> (8 - byte_offset));
+    if (y + 8 < bitmap->_height) {
+      bitmap->_buf[coordinates_to_index(x, y + 8, bitmap->_width)] &= ~byte_mask | (val >> (8 - byte_offset));
+    }
   }
 }
 

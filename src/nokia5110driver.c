@@ -100,6 +100,7 @@ static void spi_master_initialize(volatile uint8_t *spi_port, uint8_t mosi,
   set_pin_mode(spi_port, sck, OUTPUT);
   set_pin_mode(spi_port, ss, OUTPUT);
   set_pin(spi_port, ss);
+  SPSR |= _BV(SPI2X);
   SPCR = _BV(SPE);
   SPCR |= _BV(MSTR);
 }

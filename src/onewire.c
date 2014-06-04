@@ -20,16 +20,16 @@
 #define TIME_SLOT_DURATION 60
 #define READ_SAMPLE_DELAY 10 
 
-int8_t onewire_setup_device(struct OnewireDevice *device, 
+bool onewire_setup_device(struct OnewireDevice *device, 
                             volatile uint8_t *bus_register, uint8_t bus_pin)
 {
   device->bus_port = bus_register;
   device->bus_pin = bus_pin;
   // Check if a device is connected on the line
-  if (onewire_send_reset_pulse(device) == 1) {
+  if (onewire_send_reset_pulse(device)) {
       return onewire_get_ROM_code(device);
   } else {
-      return -1;
+      return false;
   }
 }
 
@@ -64,7 +64,7 @@ uint8_t onewire_read_byte(struct OnewireDevice *device)
   return byte;
 }
 
-int8_t onewire_send_reset_pulse(struct OnewireDevice *device)
+bool onewire_send_reset_pulse(struct OnewireDevice *device)
 {
   int8_t presence_detected;
 
@@ -82,13 +82,13 @@ int8_t onewire_send_reset_pulse(struct OnewireDevice *device)
   set_pin_mode(device->bus_port, device->bus_pin, INPUT);
   presence_detected = get_bit_pu(*port_to_pin_reg(device->bus_port), device->bus_pin);
   _delay_us(ready_PULSE_TIME - ready_RESPONSE_TIME);
-  return presence_detected ? 1 : -1;
+  return presence_detected;
 }
 
-int8_t onewire_get_ROM_code(struct OnewireDevice *device)
+bool onewire_get_ROM_code(struct OnewireDevice *device)
 {
-  if (onewire_send_reset_pulse(device) == -1) {
-      return -1;
+  if (!onewire_send_reset_pulse(device)) {
+      return false;
   }
   onewire_send_byte(device, READ_ROM);
   device->family_code = onewire_read_byte(device);
@@ -104,5 +104,5 @@ int8_t onewire_get_ROM_code(struct OnewireDevice *device)
   }
   
   device->crc = onewire_read_byte(device);
-  return 1;
+  return true;
 }

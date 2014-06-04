@@ -22,3 +22,8 @@
 *.x86_64
 *.hex
 *.swp
+
+include/images*
+temp*
+.ycm_extra_conf.*
+tags

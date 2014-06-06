@@ -14,7 +14,7 @@ PROGRAMMER := avrisp2
 # ** Enter file that contains main, minus the suffix
 MAIN := main
 # ** Enter any additional files that should be linked with main, in filename.o format
-OBJECTS := $(MAIN).o pwm.o nokia5110driver.o pid.o onewire.o onewire_ds18b20.o bitmap2d.o keypad.o
+OBJECTS := $(MAIN).o pwm.o nokia5110driver.o pid.o ow.o ow_ds18b20.o bitmap2d.o keypad.o timer.o state_machines.o
 VPATH := ./$(SRCDIR):./$(INCDIR):./$(OBJDIR):./$(DEPDIR)
 # *IMPORTANT*: These fuse settings are for the ATmega1284P. Although the 1280 is practically the same
 # microcontroller, I'm not 100% sure if the fuse settings are the same. If you are using

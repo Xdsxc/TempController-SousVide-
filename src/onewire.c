@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <util/delay.h>
 #include <avr/io.h>
-#include "ow.h"
+#include "onewire.h"
 #include "pinmanip.h"
 
 /*

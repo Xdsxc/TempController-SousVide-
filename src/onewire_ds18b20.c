@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "ow_ds18b20.h"
-#include "ow.h"
+#include "onewire_ds18b20.h"
+#include "onewire.h"
 #include "pinmanip.h"
 
 inline float celsius_to_fahrenheit(float degrees_celsius)

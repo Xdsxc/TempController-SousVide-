@@ -9,8 +9,8 @@
 #include "pwm.h"
 #include "bitmap2d.h"
 #include "nokia5110driver.h"
-#include "ow.h"
-#include "ow_ds18b20.h"
+#include "onewire.h"
+#include "onewire_ds18b20.h"
 #include "images/letters.h"
 #include "images/test_screen.h"
 static bool DO_WRITE_DISPLAY = false;

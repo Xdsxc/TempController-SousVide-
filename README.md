@@ -2,9 +2,6 @@
 ==============
 AVR-based temperature control
 
-Because who wants to pay $400.00 for a SousVide machine?
-
-
 ##What is it?
 This device allows you to control the output of a wide range of appliances. It’s as simple as plugging in a device of your choosing, entering the desired target and time, and watching it go after that.  The current implementation allows for modulating output based on the temperature reading, but it wouldn’t be hard at all to modify it to work with nearly any type of sensor and output device.
 
@@ -16,8 +13,6 @@ An appliance that heats up fluid. I’ve had success using a tea kettle, a rice 
 Plug the device into the female socket, and the power cord into the male socket. Connect the power, and follow the 3 simple menus. Then sit back and wait! For safety, make sure the device is completely disconnected from the power socket before opening the enclosure.
 
 ##Technical Information
-###Device Setup:
-* [Schematic](https://lh6.googleusercontent.com/0x_MaSRv86tkRAIy-K_ybhhEPT5qhUmC6IR2JofiPs4PCULzIG4iLV3fRS8RGkc_OQ2MrQ=s190)
 
 ###Technology used:
 
@@ -31,3 +26,9 @@ Plug the device into the female socket, and the power cord into the male socket.
 
 ### How to use the code:
 No modification should be neccessary if the schematic is followed. If one wishes to use different pins for control, adjust the component initialization in main.c. The timers are intended for use with an 8MHz ATMega1284p. To use with any other device, some component registers may need to be modified (particularly the timer in timer.c, and the pwm setup in pwm.c.
+
+###Device Setup:
+![Imgur](http://i.imgur.com/MycyPM2.png)
+![Pic1](http://i.imgur.com/zDEDG0H.jpg)
+![Imgur](http://i.imgur.com/SbO3p64.jpg)
+![Imgur](http://i.imgur.com/oEXwkrK.jpg)

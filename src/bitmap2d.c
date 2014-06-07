@@ -9,28 +9,32 @@ static inline uint16_t coordinates_to_index(uint16_t x, uint16_t y, uint16_t wid
   return x + ((y/8)*width);
 }
 
-
+/* Initialize bitmap */
 void bitmap_initialize(struct Bitmap2D *bitmap)
 {
   bitmap->_buf = NULL;
 }
 
+/* Free bitmaps associated buffer. DYNAMIC ONLY */
 void bitmap_free_buffer(struct Bitmap2D *bitmap)
 {
   free(bitmap->_buf);
   bitmap->_buf = NULL;
 }
 
+/* Get bitmaps area */
 uint16_t bitmap_size(const struct Bitmap2D *bitmap)
 {
   return bitmap->_width * bitmap->_height;
 }
 
+/* Set a single bit in the bitmap */
 void bitmap_set_bit(struct Bitmap2D *bitmap, uint16_t x, uint16_t y)
 {
   bitmap->_buf[coordinates_to_index(x, y, bitmap->_width)] |= 1 << (y%8);
 }
 
+/* Set a range of bits in the bitmap */
 void bitmap_set_range(struct Bitmap2D *bitmap, uint16_t x_init, uint16_t x_final, 
     uint16_t y_init, uint16_t y_final)
 {
@@ -59,11 +63,13 @@ void bitmap_set_range(struct Bitmap2D *bitmap, uint16_t x_init, uint16_t x_final
   }
 }
 
+/* Clear a single bit */
 void bitmap_clear_bit(struct Bitmap2D *bitmap, uint16_t x, uint16_t y)
 {
   bitmap->_buf[coordinates_to_index(x, y, bitmap->_width)] &= ~(1 << (y%8));
 }
 
+/* Clear a range of bits */
 void bitmap_clear_range(struct Bitmap2D *bitmap, uint16_t x_init, uint16_t x_final, 
     uint16_t y_init, uint16_t y_final)
 {
@@ -91,11 +97,13 @@ void bitmap_clear_range(struct Bitmap2D *bitmap, uint16_t x_init, uint16_t x_fin
   }
 }
 
+/* Get a single bit */
 uint8_t bitmap_get_bit(const struct Bitmap2D *bitmap, uint16_t x, uint16_t y)
 {
   return (bitmap->_buf[coordinates_to_index(x, y, bitmap->_width)] & (1 << y%8)) > 0;
 }
 
+/* Get a single byte in the bitmap */
 uint8_t bitmap_get_byte(const struct Bitmap2D *bitmap, uint16_t x, uint16_t y)
 {
   uint8_t byte_offset = y%8;
@@ -108,6 +116,7 @@ uint8_t bitmap_get_byte(const struct Bitmap2D *bitmap, uint16_t x, uint16_t y)
   }
 }
 
+/* Write a byte in the bitmap. Allows writing in between rows as well */
 void bitmap_write_byte(struct Bitmap2D *bitmap, uint16_t x, uint16_t y, uint8_t val) 
 {
   uint8_t byte_offset = y%8;
@@ -123,22 +132,29 @@ void bitmap_write_byte(struct Bitmap2D *bitmap, uint16_t x, uint16_t y, uint8_t 
   }
 }
 
+/* Set the entire bitmap to all zeroes */
 void bitmap_clear_all(struct Bitmap2D *bitmap)
 {
   memset(bitmap->_buf, 0,(bitmap->_width*bitmap->_height)/8 + (bitmap->_width*bitmap->_height)%8);
 }
 
+/* Set the entire bitmap to all ones */
 void bitmap_set_all(struct Bitmap2D *bitmap)
 {
   memset(bitmap->_buf, 0xFF, (bitmap->_width*bitmap->_height)/8);
 }
 
+/* Dynamically allocate a new bitmap. Does not free the previous bitmap. It is
+ * the callers responsibility to ensure that dynamic bitmaps are freed or
+ * stored before changing the buffer.  */
 bool bitmap_new_buffer(struct Bitmap2D *bitmap)
 {
   bitmap->_buf = (uint8_t*)calloc((bitmap->_width*bitmap->_height)/8 + 1, sizeof(uint8_t));
   return bitmap->_buf != NULL;
 }
 
+/* Set a bitmaps source buffer. If make_copy, dynamically allocates a new array
+ * and copies buf into the array, otherwise uses buf as the internal array. */
 bool bitmap_set_buffer(struct Bitmap2D *bitmap, uint8_t *buf, uint16_t width, uint16_t height, bool make_copy)
 {
   bitmap->_width = width;
@@ -156,6 +172,7 @@ bool bitmap_set_buffer(struct Bitmap2D *bitmap, uint8_t *buf, uint16_t width, ui
   }
 }
 
+/* Resize a dynamically allocated buffer to width and height */
 bool bitmap_resize(struct Bitmap2D *bitmap, uint16_t width, uint16_t height)
 {
     bitmap->_width = width;
@@ -164,6 +181,8 @@ bool bitmap_resize(struct Bitmap2D *bitmap, uint16_t width, uint16_t height)
     return  bitmap->_buf != NULL;
 }
 
+/* Superimposes the source bitmap starting and src_x and src_y to the dest
+ * bitmap starting at dest_x and dest_x */
 void bitmap_superimpose(struct Bitmap2D *source, uint16_t src_x, uint16_t src_y, uint16_t width,
                         struct Bitmap2D *dest  , uint16_t dest_x, uint16_t dest_y)
 {

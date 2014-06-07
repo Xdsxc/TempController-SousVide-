@@ -43,7 +43,6 @@ void n5110_reset(struct Nokia5110LCD *lcd)
   n5110_send_command(lcd, N5110_BIAS | N5110_DEFAULT_BIAS);
   n5110_send_command(lcd, N5110_CONTRAST | N5110_DEFAULT_CONTRAST); 
   n5110_send_command(lcd, N5110_BASIC);
-  n5110_send_command(lcd, N5110_INVERSE);
   n5110_clear(lcd); 
 }
 
@@ -100,7 +99,9 @@ static void spi_master_initialize(volatile uint8_t *spi_port, uint8_t mosi,
   set_pin_mode(spi_port, sck, OUTPUT);
   set_pin_mode(spi_port, ss, OUTPUT);
   set_pin(spi_port, ss);
+#if F_CPU == 8000000
   SPSR |= _BV(SPI2X);
+#endif
   SPCR = _BV(SPE);
   SPCR |= _BV(MSTR);
 }

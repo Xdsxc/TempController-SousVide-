@@ -25,43 +25,28 @@ struct Bitmap2D
 
 
 void bitmap_initialize(struct Bitmap2D *bitmap);
-/* 
- * Free a bitmaps held data. Only for bitmaps not referencing an external
- * buffer */
-void bitmap_free_buffer(struct Bitmap2D *bitmap);
 
-/* Allocate a new buffer, initialized to zeroes. Must already be initialized
- * with a set size */
+/* Dynamic bitmap commands only */
+void bitmap_free_buffer(struct Bitmap2D *bitmap);
+bool bitmap_resize(struct Bitmap2D *bitmap, uint16_t width, uint16_t height);
 bool bitmap_new_buffer(struct Bitmap2D *bitmap);
+/* End dynamic commands only */
 
 bool bitmap_set_buffer(struct Bitmap2D *bitmap, uint8_t *buf, uint16_t width, uint16_t height, bool make_copy);
-
-/* Only for bitmaps with dynamically allocated memory, or freshly initialized*/
-bool bitmap_resize(struct Bitmap2D *bitmap, uint16_t width, uint16_t height);
-
-/*
- * Get the area size of a bitmap, in number of bits */
 uint16_t bitmap_size(const struct Bitmap2D *bitmap);
-
-/* 
- * The following are all simply Bitmap2D manipulation functions. They're
- * pretty self explanatory */
 void bitmap_set_bit(struct Bitmap2D *bitmap, uint16_t x, uint16_t y);
 void bitmap_set_range(struct Bitmap2D *bitmap, uint16_t x_init, uint16_t x_final, 
-    uint16_t y_init, uint16_t y_final);
-void bitmap_set_all(struct Bitmap2D *bitmap);
+                          uint16_t y_init, uint16_t y_final);
 
+void bitmap_set_all(struct Bitmap2D *bitmap);
 void bitmap_clear_bit(struct Bitmap2D *bitmap, uint16_t x, uint16_t y);
 void bitmap_clear_range(struct Bitmap2D *bitmap, uint16_t x_init, uint16_t x_final, 
-    uint16_t y_init, uint16_t y_final);
+                          uint16_t y_init, uint16_t y_final);
 void bitmap_clear_all(struct Bitmap2D *bitmap);
-
 uint8_t bitmap_get_bit(const struct Bitmap2D *bitmap, uint16_t x, uint16_t y);
 uint8_t bitmap_get_byte(const struct Bitmap2D *bitmap, uint16_t x, uint16_t y);
 void bitmap_write_byte(struct Bitmap2D *bitmap, uint16_t x, uint16_t y, uint8_t val);
-
-
 void bitmap_superimpose(struct Bitmap2D *source, uint16_t src_x, uint16_t src_y, uint16_t width,
-                        struct Bitmap2D *dest  , uint16_t dest_x, uint16_t dest_y);
+                          struct Bitmap2D *dest  , uint16_t dest_x, uint16_t dest_y);
 
 #endif

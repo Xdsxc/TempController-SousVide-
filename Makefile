@@ -19,8 +19,8 @@ VPATH := ./$(SRCDIR):./$(INCDIR):./$(OBJDIR):./$(DEPDIR)
 # *IMPORTANT*: These fuse settings are for the ATmega1284P. Although the 1280 is practically the same
 # microcontroller, I'm not 100% sure if the fuse settings are the same. If you are using
 # any other AVR besides the ATmega1284P, double check the fuse settings before making 
-# the "fuse" target. By default, disables JTAGEN and CKDIV8. The uncommented portion sets the 16MHz clock,
-# the commented portion sets an 8MHz clock.
+# the "fuse" target. By default, disables JTAGEN and CKDIV8. The lower portion sets the 16MHz clock,
+# the upper portion sets an 8MHz clock.
 
 LFUSE := 0xC2
 HFUSE := 0xD1
@@ -31,7 +31,7 @@ EFUSE := 0xFD
 
 AVRDUDE := avrdude -c $(PROGRAMMER) -p $(DEVICE)
 CC := avr-gcc
-CFLAGS := -g -Os -I./$(INCDIR) -Wall -ffunction-sections -fshort-enums -mmcu=$(DEVICE) -DF_CPU=$(CLOCK) -std=gnu99 
+CFLAGS := -g -O2 -I./$(INCDIR) -Wall -ffunction-sections -fshort-enums -mmcu=$(DEVICE) -DF_CPU=$(CLOCK) -std=gnu99 
 LDFLAGS := -lm
 default: $(MAIN).hex
 
@@ -67,7 +67,7 @@ expanded: $(MAIN).c
 disasm: $(MAIN).S
 
 clean:
-	@rm -f ./$(OBJDIR)/*
+	@rm -f ./$(OBJDIR)/* main.hex
 
 cleanall:
 	@rm -f *.hex *.elf *.S *.o

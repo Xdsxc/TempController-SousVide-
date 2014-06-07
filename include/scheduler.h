@@ -13,6 +13,7 @@ uint32_t gcd(uint32_t a, uint32_t b)
   }
   return 0;
 }
+
 struct Task 
 {
   // Tasks should have members that include: state, period,

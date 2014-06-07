@@ -12,6 +12,7 @@ An appliance that heats up fluid. I’ve had success using a tea kettle, a rice 
 ##How to use it
 Plug the device into the female socket, and the power cord into the male socket. Connect the power, and follow the 3 simple menus. Then sit back and wait! For safety, make sure the device is completely disconnected from the power socket before opening the enclosure.
 
+See it in action: [https://www.youtube.com/watch?v=vFpYjpEDkyg](https://www.youtube.com/watch?v=vFpYjpEDkyg)
 ##Technical Information
 
 ###Technology used:

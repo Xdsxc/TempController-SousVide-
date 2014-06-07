@@ -15,6 +15,12 @@ Plug the device into the female socket, and the power cord into the male socket.
 See it in action: [http://youtu.be/vFpYjpEDkyg](http://youtu.be/vFpYjpEDkyg)
 ##Technical Information
 
+### Theory
+  The PID controller contains three tunable factors: The proportional factor (Kp), the integral factor (Ki), and the derivative factor (Kd). By tuning these three parameters, you can modify the behavior of the controller. The Kp factor modifies the output in an exact proportion to the error (T_current - T_set). The integral factor allows the controller to know its "history" by keeping a running total of all the errors. This allows us to stabilize a temperature in the event that the thing we're controlling requires power to maintain our goal. It also ramps up production if it's taking too long to reach the setpoint due to a low output. Likewise, it ramps down production if the power is staying too high even after we pass the setpoint. Finally, the Kd factor prevents us from climbing the temperature ladder too fast by measuring the rate of change of the temperature and subracting a chunk of output based on the reading.
+  
+  
+  The output power to the device itself is controlled by modifying the duty cycle of the PWM from the microcontroller to the solid state relay. If we have a 50% duty cycle, then if the power is only on for half the time and off for the other half, then we can count that as receiving 50% power. The duty cycle is changed in response to the reading from the PID controller. The closer we get to the set point, the less power we get. If we were able to actively cool our device as well, we could even output a negative power to compensate for overshoot.
+  
 ###Technology used:
 
 * 8MHz ATMega1284p

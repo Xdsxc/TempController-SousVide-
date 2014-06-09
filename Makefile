@@ -22,9 +22,12 @@ VPATH := ./$(SRCDIR):./$(INCDIR):./$(OBJDIR):./$(DEPDIR)
 # the "fuse" target. By default, disables JTAGEN and CKDIV8. The lower portion sets the 16MHz clock,
 # the upper portion sets an 8MHz clock.
 
+# 8MHz clock
 LFUSE := 0xC2
 HFUSE := 0xD1
 EFUSE := 0xFD
+
+# 16MHz clock
 #LFUSE := 0xFF
 #HFUSE := 0xD9
 #EFUSE := 0xFC
@@ -33,6 +36,9 @@ AVRDUDE := avrdude -c $(PROGRAMMER) -p $(DEVICE)
 CC := avr-gcc
 CFLAGS := -g -O2 -I./$(INCDIR) -Wall -ffunction-sections -fshort-enums -mmcu=$(DEVICE) -DF_CPU=$(CLOCK) -std=gnu99 
 LDFLAGS := -lm
+
+$(shell mkdir -p $(OBJDIR))
+
 default: $(MAIN).hex
 
 flash: $(MAIN).hex
@@ -67,12 +73,13 @@ expanded: $(MAIN).c
 disasm: $(MAIN).S
 
 clean:
-	@rm -f ./$(OBJDIR)/* main.hex
+	@rm -rf ./$(OBJDIR)
 
-cleanall:
-	@rm -f *.hex *.elf *.S *.o
 fuses:
 	$(AVRDUDE) -U lfuse:w:$(LFUSE):m -U hfuse:w:$(HFUSE):m -U efuse:w:$(EFUSE):m
 
-.PHONY: cpp clean fuses cleanall
+$(DEPDIR) $(OBJDIR):
+	@mkdir $@
+
+.PHONY: cpp clean fuses 
 .SUFFIXES: .c .o .hex .elf .asm .eep
